@@ -74,7 +74,7 @@ contract elections{
     
     function checkifvoted(uint _candidateID) public{
         voters[msg.sender].HasVoted=true;
-        voters[msg.sender].VotedForID= _candidateID;
+        voters[msg.sender].Voted_For_ID= _candidateID;
     }
 
     function updatevote(uint _candidateID) public{
@@ -82,12 +82,12 @@ contract elections{
         emit voted(_candidateID,msg.sender);
     }
 
-    function getcandidate(uint _candidateID) public view candidateexists(_candidateID)returns(uint,string memory,uint){
+    function getcandidate(uint _candidateID) public view candidatexists(_candidateID)returns(uint,string memory,uint){
         candidate memory candidates= candidates[_candidateID];
-        return (_candidateID,candidate.name,candidate.votecount);
+        return (_candidateID,candidates.name,candidates.votecount);
     }
 
-    function countvotes(uint _candidateID) public view candidateexists(_candidateID) returns(uint){
+    function countvotes(uint _candidateID) public view candidatexists(_candidateID) returns(uint){
         return candidates[_candidateID].votecount;
     }
 
