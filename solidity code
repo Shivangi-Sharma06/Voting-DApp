@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+
 contract elections{
+
     struct candidate{
-        uint ID;
         string name;
         uint votecount;
     }
     struct voter{
-        uint VotedForID;
+        uint Voted_For_ID;
         bool HasVoted;
     }
 
@@ -15,15 +16,15 @@ contract elections{
     //dmerits of storing in mapping is that it is not odered and ypu won't get length directly 
 
     address public controller; 
-
-    mapping (uint=>candidate) public candidates;
     uint public countcandidate;
 
+    mapping (uint=>candidate) public candidates;
     mapping (address=>voter) public voters;  
 
-    event candidateadded(uint candidateID,string name);
-    event candidateremoved(uint candidateID,string name);
-    event voted(uint candidateID, address voter);
+    event candidateadded(uint indexed candidateID,string name);
+    event candidateremoved(uint indexed candidateID,string name);
+    event voted(uint indexed candidateID, address voter);
+    event controllerchanged(address oldcontroller, address newcontroller);
 
     constructor(){
         controller=msg.sender;
@@ -35,29 +36,42 @@ contract elections{
         _;
     }
 
+    modifier candidatexists(uint _candidateID){
+        require(_candidateID > 0 && _candidateID <= countcandidate, "Invalid candidate ID");
+       _;
+    }
+
+    modifier hasnotvoted(){
+        require(!voters[msg.sender].HasVoted, "you have already voted");
+        _;
+    }
+
     function addcandidate(string memory _candidatename) public onlyadmin{
         countcandidate++;
-        candidates[countcandidate]=candidate(countcandidate, _candidatename,0);
+        candidates[countcandidate]=candidate(_candidatename,0);
         emit candidateadded(countcandidate,_candidatename);
     }
 
-    function removecandidate(uint ID) public onlyadmin{
-        delete candidates[ID];
+    function removecandidate(uint _candidateID) public onlyadmin candidatexists(_candidateID){
+        string memory candidatename=candidates[_candidateID].name;
+        delete candidates[_candidateID];
+        emit candidateremoved(_candidateID,candidatename);
+
     }
 
-    function changeowner(address newcontroller) public onlyadmin{
-        controller=newcontroller;
+    function changeowner(address _newcontroller) public onlyadmin{
+        require(_newcontroller!=address(0),"Invalid address");
+        address oldcontroller=controller;
+        controller=_newcontroller;
+        emit controllerchanged(oldcontroller,_newcontroller);
     }
 
-    mapping (address=>bool)public votersVote;
+    function vote(uint _candidateID) public hasnotvoted candidatexists(_candidateID){
+        checkifvoted(_candidateID);
+        updatevote(_candidateID);
+    }
+
     
-    function checkvotecondition(uint _candidateID) public view {
-        require(!voters[msg.sender].HasVoted,"you have already voted");
-
-        require (candidates[_candidateID].ID != 0, "the candidate does not exist");
-        require (candidates[_candidateID].ID>0 && _candidateID<= countcandidate, "Invalid candidate ID entered");
-    }
-
     function checkifvoted(uint _candidateID) public{
         voters[msg.sender].HasVoted=true;
         voters[msg.sender].VotedForID= _candidateID;
@@ -68,27 +82,17 @@ contract elections{
         emit voted(_candidateID,msg.sender);
     }
 
-    function getcandidate(uint _candidateID) public view returns(uint,string memory,uint){
-        require(_candidateID > 0 && _candidateID<=countcandidate, "invalid candidate ID");
-        candidate memory candidate= candidates[_candidateID];
-        return (candidate.ID,candidate.name,candidate.votecount);
+    function getcandidate(uint _candidateID) public view candidateexists(_candidateID)returns(uint,string memory,uint){
+        candidate memory candidates= candidates[_candidateID];
+        return (_candidateID,candidate.name,candidate.votecount);
     }
 
-    function countvotes(uint _candidateID) public view returns(uint){
-        require(_candidateID > 0 && _candidateID <= countcandidate, "Invalid candidate ID");
+    function countvotes(uint _candidateID) public view candidateexists(_candidateID) returns(uint){
         return candidates[_candidateID].votecount;
     }
 
-    function checkifvoted(address _voter) public view returns(bool) {
+    function hasvoted(address _voter) public view returns(bool) {
         return(voters[_voter].HasVoted);
     }
-
-
-
-
-
-
-
-        
 
 }
