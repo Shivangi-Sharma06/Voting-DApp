@@ -1,6 +1,7 @@
 const { ethers } = require("ethers");
 
-const provider = new ethers.JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/ttkuxPlTAgFCOGLtwgNdoqi_HivVjAOH");
+const provider = new ethers.providers.JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/ttkuxPlTAgFCOGLtwgNdoqi_HivVjAOH");
+
 console.log("Provider initialized:", provider);
 
 const walletAddress = "0x9393C3AF51f4Ec789830226E75CDcBC6c4bf7Df6";
