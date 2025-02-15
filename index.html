@@ -15,14 +15,14 @@
         <div id="controllerActions" style="display: none;">
             <h2>Controller Actions</h2>
             <input type="text" id="candidateName" placeholder="Candidate Name">
-            <button onclick="addCandidate()">Add Candidate</button>
+            <button id="addCandidatebtn">Add Candidate</button>
             <input type="number" id="candidateIdToRemove" placeholder="Candidate ID">
-            <button onclick="removeCandidate()">Remove Candidate</button>
+            <button id="removeCandidatebtn">Remove Candidate</button>
         </div>
         <div id="voterActions">
             <h2>Voter Actions</h2>
             <input type="number" id="candidateIdToVote" placeholder="Candidate ID">
-            <button onclick="vote()">Vote</button>
+            <button id="votebtn">Vote</button>
         </div>
         <div id="candidateList">
             <h2>Candidates</h2>
@@ -33,9 +33,7 @@
     <button id="connectButton">Connect Wallet</button>
         <p id="account">Not connected</p>
 
-    <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
-    <script src="app.js"></script>
-    <script src="script1.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
 
