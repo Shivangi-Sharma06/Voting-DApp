@@ -4,11 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voting DApp</title>
+    <title>Elections</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 </head>
-
 <body>
+
+    <button id="connectWallet">Connect Wallet</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const connectButton = document.getElementById("connectWallet");
+            if (connectButton) {
+                connectButton.addEventListener("click", async function () {
+                    if (window.ethereum) {
+                        try {
+                            const provider = new ethers.providers.Web3Provider(window.ethereum);
+                            await window.ethereum.request({ method: "eth_requestAccounts" });
+                            const signer = provider.getSigner();
+                            const address = await signer.getAddress();
+                            console.log("Connected Wallet:", address);
+                            alert("Connected: " + address);
+                        } catch (error) {
+                            console.error("Wallet Connection Error:", error);
+                        }
+                    } else {
+                        alert("Metamask not detected! Install it from https://metamask.io/");
+                    }
+                });
+            } else {
+                console.error("Button with ID 'connectWallet' not found!");
+            }
+        });
+    </script>
+
     <div class="container">
         <h1>Voting DApp</h1>
         <div id="connectionStatus">Not connected</div>
@@ -30,10 +59,13 @@
         </div>
     </div>
 
-    <button id="connectButton">Connect Wallet</button>
-        <p id="account">Not connected</p>
+   
 
-    <script type="module" src="app.js"></script>
+    <script type="module" src="./ethers-5.6.esm.min.js"></script>
+    <script type="module" src="./app.js"></script>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js"></script>
+
 </body>
-</html>
+</body>
 
+</html>

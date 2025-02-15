@@ -43,16 +43,6 @@ button {
     border-radius: 8px;
 }
 
-#connectButton {
-    background-color: #2196F3;
-    position: fixed;
-    top: 20px;
-    right: 20px;
-}
-
-#connectButton:hover {
-    background-color: #1976D2;
-}
 
 #candidateList {
     margin-top: 30px;
@@ -120,9 +110,5 @@ button {
         margin: 5px 0;
     }
 
-    #connectButton {
-        position: static;
-        width: auto;
-        margin: 10px auto;
-    }
+   
 }

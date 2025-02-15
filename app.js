@@ -1,4 +1,5 @@
-import { ethers } from "./ethers-5.6.esm.min.js";
+import { ethers } from "ethers";
+
 const contractAddress = "0x9393C3AF51f4Ec789830226E75CDcBC6c4bf7Df6";
 const contractABI = [
 	{
@@ -291,16 +292,11 @@ const removeCandidateBtn = document.getElementById("removeCandidateBtn");
 const voteBtn = document.getElementById("voteBtn");
 
 async function connect() {
-	if (typeof window.ethereum !== 'undefined') {
 
-		//pehle hi warn ki install karo metamask
-		if (typeof window.ethereum === 'undefined') {
-			alert("Please install MetaMask first!");
-			return;
-		}
-
+		
+		if (typeof window.ethereum !== 'undefined') {
 		try {
-			await window.ethereum.request({ method: 'eth_requestAccounts' });
+			const accounts=await window.ethereum.request({ method: 'eth_requestAccounts' });
 			provider = new ethers.providers.Web3Provider(window.ethereum);
 			signer = provider.getSigner();
 
