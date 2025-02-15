@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elections</title>
+    <title>Ethereum Voting DApp</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 </head>
+
 <body>
 
     <button id="connectWallet">Connect Wallet</button>
@@ -40,19 +41,35 @@
 
     <div class="container">
         <h1>Voting DApp</h1>
-        <div id="connectionStatus">Not connected</div>
-        <div id="controllerActions" style="display: none;">
+            
+        <div id = "controllerActions"
             <h2>Controller Actions</h2>
-            <input type="text" id="candidateName" placeholder="Candidate Name">
-            <button id="addCandidatebtn">Add Candidate</button>
-            <input type="number" id="candidateIdToRemove" placeholder="Candidate ID">
-            <button id="removeCandidatebtn">Remove Candidate</button>
+                <h4>Add Candidate</h4>
+                <input type="text" id="candidateName" placeholder="Candidate Name">
+                <button id="addCandidateBtn" disabled>Add Candidate</button>
+                <span class="controller-only"></span>
         </div>
-        <div id="voterActions">
-            <h2>Voter Actions</h2>
+
+        <div class="action-group">
+                <h4>Remove Candidate</h4>
+                <input type="number" id="removeCandidateId" placeholder="Candidate ID">
+                <button id="removeCandidateBtn" disabled>Remove Candidate</button>
+                <span class="controller-only"></span>
+        </div>
+                
+        <div class="action-group">
+                <h4>Change Controller</h4>
+                <input type="text" id="newControllerAddress" placeholder="New Controller Address">
+                <button id="changeControllerBtn" disabled>Change Controller</button>
+                <span class="controller-only"></span>
+        </div>
+
+        <div>
+            <h3>Vote for a Candidate</h3>
             <input type="number" id="candidateIdToVote" placeholder="Candidate ID">
-            <button id="votebtn">Vote</button>
-        </div>
+            <button id="voteBtn">Vote</button>
+        </div> 
+
         <div id="candidateList">
             <h2>Candidates</h2>
             <ul id="candidates"></ul>
