@@ -11,38 +11,56 @@
 
 <body>
 
-    <button id="connectWallet">Connect Wallet</button>
+    <button onclick="connectWallet()">Connect Wallet</button>
+    <select id="accountSelect" style="display:none;" onchange="selectAccount(event)">
+        <!-- Accounts will be added dynamically -->
+    </select>
+    <p id="walletAddress">Not Connected</p>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const connectButton = document.getElementById("connectWallet");
-            if (connectButton) {
-                connectButton.addEventListener("click", async function () {
-                    if (window.ethereum) {
-                        try {
-                            const provider = new ethers.providers.Web3Provider(window.ethereum);
-                            await window.ethereum.request({ method: "eth_requestAccounts" });
-                            const signer = provider.getSigner();
-                            const address = await signer.getAddress();
-                            console.log("Connected Wallet:", address);
-                            alert("Connected: " + address);
-                        } catch (error) {
-                            console.error("Wallet Connection Error:", error);
-                        }
-                    } else {
-                        alert("Metamask not detected! Install it from https://metamask.io/");
+        let availableAccounts = [];
+        let selectedAccount = null;
+
+        async function connectWallet() {
+            if (window.ethereum) {
+                try {
+                    availableAccounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+
+                    if (availableAccounts.length > 0) {
+                        populateAccountDropdown(availableAccounts);
                     }
-                });
+                } catch (error) {
+                    console.error("Error connecting to MetaMask:", error);
+                }
             } else {
-                console.error("Button with ID 'connectWallet' not found!");
+                alert("MetaMask is not installed. Please install it to use this feature.");
             }
-        });
+        }
+
+        function populateAccountDropdown(accounts) {
+            const accountSelect = document.getElementById("accountSelect");
+            accountSelect.innerHTML = ""; // Clear previous options
+            accounts.forEach(account => {
+                let option = document.createElement("option");
+                option.value = account;
+                option.textContent = account;
+                accountSelect.appendChild(option);
+            });
+
+            accountSelect.style.display = "block"; // Show dropdown
+        }
+
+        function selectAccount(event) {
+            selectedAccount = event.target.value;
+            document.getElementById("walletAddress").innerText = `Connected: ${selectedAccount}`;
+            console.log("Selected Account:", selectedAccount);
+        }
     </script>
 
     <div class="container">
         <h1>Voting DApp</h1>
             
-        <div id = "controllerActions"
+        <div id = "controllerActions">
             <h2>Controller Actions</h2>
                 <h4>Add Candidate</h4>
                 <input type="text" id="candidateName" placeholder="Candidate Name">
@@ -78,7 +96,6 @@
 
    
 
-    <script type="module" src="./ethers-5.6.esm.min.js"></script>
     <script type="module" src="./app.js"></script>
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js"></script>
 

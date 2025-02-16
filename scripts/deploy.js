@@ -2,16 +2,16 @@ const hre = require("hardhat");
 
 async function main() {
     // Replace "YourContractName" with the actual name of your contract
-    const Contract = await hre.ethers.getContractFactory("code"); 
+    const Contract = await hre.ethers.getContractFactory("elections"); 
 
     console.log("Deploying contract...");
 
     // Deploy the contract
     const contract = await Contract.deploy(); 
 
-    await contract.deployed(); // Wait for deployment
+    await contract.waitForDeployment(); // Wait for deployment
 
-    console.log("Contract deployed to:", contract.address);
+    console.log("Contract deployed to:", contract.target);
 }
 
 main()

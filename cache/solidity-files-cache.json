@@ -1,4 +1,40 @@
 {
   "_format": "hh-sol-cache-2",
-  "files": {}
+  "files": {
+    "C:\\Users\\shiva\\OneDrive\\Desktop\\project\\first dapp\\Voting-DApp\\contracts\\elections.sol": {
+      "lastModificationDate": 1739723687930,
+      "contentHash": "fe6d0aeabc084f89a6e9e215c4965709",
+      "sourceName": "contracts/elections.sol",
+      "solcConfig": {
+        "version": "0.8.18",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "elections"
+      ]
+    }
+  }
 }
