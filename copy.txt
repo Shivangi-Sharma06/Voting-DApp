@@ -1,0 +1,53 @@
+async function connect() {
+    if (typeof window.ethereum !== 'undefined') {
+        try {
+            console.log("Requesting account access...");
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            if (!accounts || accounts.length === 0) {
+                throw new Error("No accounts returned from Ethereum request.");
+            }
+
+            console.log("Initializing provider and signer...");
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            
+            account = accounts[0]; // Set the account variable
+            if (!account) {
+                throw new Error("Failed to retrieve account.");
+            }
+            
+            userAddress = account;
+            accountEl.innerHTML = account;
+            connectionStatus.innerHTML = "Connected";
+
+            console.log("Initializing contract...");
+            if (!contractAddress || !contractABI) {
+                throw new Error("Contract address or ABI is missing.");
+            }
+
+            contract = new ethers.Contract(contractAddress, contractABI, signer);
+            console.log("Contract Initialized:", contract);
+            
+            console.log("Checking controller status...");
+            await checkControllerStatus();
+            
+            connectButton.innerHTML = "Connected";
+            connectButton.disabled = true;
+            
+            console.log("Updating candidate list...");
+            await updateCandidateList();
+            
+            // Listen for account changes
+            if (window.ethereum) {
+                window.ethereum.on("accountsChanged", handleAccountsChanged);
+                console.log("Account change listener attached.");
+            }
+        } catch (error) {
+            console.error("Connection error:", error);
+            connectionStatus.innerHTML = `Error: ${error.message}`;
+        }
+    } else {
+        console.error("Ethereum provider is not detected. Please install MetaMask.");
+        connectionStatus.innerHTML = "Error: Ethereum provider not found";
+    }
+}

@@ -1,282 +1,282 @@
 import { ethers } from "ethers";
 
 const contractAddress =" 0x5FbDB2315678afecb367f032d93F642f64180aa3";
-const contractABI = [
-    {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "candidateID",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        }
-      ],
-      "name": "candidateadded",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "candidateID",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        }
-      ],
-      "name": "candidateremoved",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "oldcontroller",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "newcontroller",
-          "type": "address"
-        }
-      ],
-      "name": "controllerchanged",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "candidateID",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "voter",
-          "type": "address"
-        }
-      ],
-      "name": "voted",
-      "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_candidatename",
-          "type": "string"
-        }
-      ],
-      "name": "addcandidate",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "candidates",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "votecount",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_newcontroller",
-          "type": "address"
-        }
-      ],
-      "name": "changeowner",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "controller",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "countcandidate",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_candidateID",
-          "type": "uint256"
-        }
-      ],
-      "name": "countvotes",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_candidateID",
-          "type": "uint256"
-        }
-      ],
-      "name": "getcandidate",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_voter",
-          "type": "address"
-        }
-      ],
-      "name": "hasvoted",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_candidateID",
-          "type": "uint256"
-        }
-      ],
-      "name": "removecandidate",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_candidateID",
-          "type": "uint256"
-        }
-      ],
-      "name": "vote",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "voters",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "Voted_For_ID",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bool",
-          "name": "HasVoted",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ];
+const contractABI =  [
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "candidateID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "name": "candidateadded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "candidateID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "name": "candidateremoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldcontroller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newcontroller",
+        "type": "address"
+      }
+    ],
+    "name": "controllerchanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "candidateID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      }
+    ],
+    "name": "voted",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_candidatename",
+        "type": "string"
+      }
+    ],
+    "name": "addcandidate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "candidates",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "votecount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newcontroller",
+        "type": "address"
+      }
+    ],
+    "name": "changeowner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "controller",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "countcandidate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_candidateID",
+        "type": "uint256"
+      }
+    ],
+    "name": "countvotes",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_candidateID",
+        "type": "uint256"
+      }
+    ],
+    "name": "getcandidate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_voter",
+        "type": "address"
+      }
+    ],
+    "name": "hasvoted",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_candidateID",
+        "type": "uint256"
+      }
+    ],
+    "name": "removecandidate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_candidateID",
+        "type": "uint256"
+      }
+    ],
+    "name": "vote",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "voters",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "Voted_For_ID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "HasVoted",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+];
   
 let provider;
 let signer;
@@ -284,14 +284,14 @@ let contract;
 let userAddress;
 let account;
 
-const connectButton = document.getElementById("connectWallet");
-const accountEl = document.getElementById("account");
-const connectionStatus = document.getElementById("connectionStatus");
-const controllerActions = document.getElementById("controllerActions");
-const addCandidateBtn = document.getElementById("addCandidateBtn");
-const removeCandidateBtn = document.getElementById("removeCandidateBtn");
-const changeControllerBtn = document.getElementById("changeControllerBtn");
-const voteBtn = document.getElementById("voteBtn");
+// const connectButton = document.getElementById("connectWallet");
+// const accountEl = document.getElementById("account");
+// const connectionStatus = document.getElementById("connectionStatus");
+// const controllerActions = document.getElementById("controllerActions");
+// const addCandidateBtn = document.getElementById("addCandidateBtn");
+// const removeCandidateBtn = document.getElementById("removeCandidateBtn");
+// const changeControllerBtn = document.getElementById("changeControllerBtn");
+// const voteBtn = document.getElementById("voteBtn");
 
 async function connect() {
     if (typeof window.ethereum !== 'undefined') {
@@ -313,11 +313,6 @@ async function connect() {
             connectButton.innerHTML = "Connected";
             connectButton.disabled = true;
 
-            connectButton.addEventListener("click", connect);
-            addCandidateBtn.addEventListener("click", addCandidate);
-            removeCandidateBtn.addEventListener("click", removeCandidate);
-            voteBtn.addEventListener("click", vote);
-
             await updateCandidateList();
 
             // Listen for account changes
@@ -330,6 +325,13 @@ async function connect() {
         }
     }
 }
+
+//ye event listeners h jo connect function k bahar h
+connectButton.addEventListener("click", connect);
+addCandidateBtn.addEventListener("click", addCandidate);
+removeCandidateBtn.addEventListener("click", removeCandidate);
+changeControllerBtn.addEventListener("click", changeController); 
+voteBtn.addEventListener("click", vote);
 
 async function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
@@ -385,111 +387,6 @@ async function checkControllerStatus() {
         console.error("Error checking controller status:", error);
     }
 }
-
-// let provider;
-// let signer;
-// let contract;
-// let userAddress;
-// let account;
-
-// const connectButton = document.getElementById("connectWallet");
-// const accountEl = document.getElementById("account");
-// const connectionStatus = document.getElementById("connectionStatus");
-// const controllerActions = document.getElementById("controllerActions");
-// const addCandidateBtn = document.getElementById("addCandidateBtn");
-// const removeCandidateBtn = document.getElementById("removeCandidateBtn");
-// const changeControllerBtn = document.getElementById("changeControllerBtn");
-// const voteBtn = document.getElementById("voteBtn");
-
-// // connect button pe click karne pe connect function call hoga
-// async function connect() {
-// 		if (typeof window.ethereum !== 'undefined') {
-// 		try {
-			 
-// 			const accounts=await window.ethereum.request({ method: 'eth_requestAccounts' });
-// 			provider = new ethers.providers.Web3Provider(window.ethereum);
-// 			signer = provider.getSigner();
-
-// 			const account = accounts[0]; //pehla acc hi connect kardo
-// 			userAddress = account;
-// 			accountEl.innerHTML = account;
-// 			connectionStatus.innerHTML = "Connected";
-
-// 			contract = new ethers.Contract(contractAddress, contractABI, signer);
-// 			console.log("Contract Initialized:", contract);
-
-// 			await checkControllerStatus(); // Check if this account is controller
-
-//             connectButton.innerHTML = "Connected";
-//             connectButton.disabled = true;
-
-//             connectButton.addEventListener("click", connect);
-//             addCandidateBtn.addEventListener("click", addCandidate);
-//             removeCandidateBtn.addEventListener("click", removeCandidate);
-//             voteBtn.addEventListener("click", vote);
-
-//             await updateCandidateList();
-
-//             // ✅ Listen for account changes
-//             if (window.ethereum) {
-//                 window.ethereum.on("accountsChanged", handleAccountsChanged);
-//             }
-//         } catch (error) {
-//             console.error("Connection error:", error);
-//             connectionStatus.innerHTML = `Error: ${error.message}`;
-//         }
-//     }
-// }
-
-// // ✅ Handle account switch event
-// async function handleAccountsChanged(accounts) {
-//     if (accounts.length === 0) {
-//         // MetaMask locked or no accounts available
-//         accountEl.innerHTML = "Not connected";
-//         connectionStatus.innerHTML = "Please connect to MetaMask";
-//         connectButton.disabled = false;
-//         connectButton.innerHTML = "Connect Wallet";
-
-//         addCandidateBtn.disabled = true;
-//         removeCandidateBtn.disabled = true;
-//         changeControllerBtn.disabled = true;
-//     } else {
-//         account = accounts[0]; // Update active account
-//         console.log("Switched Account:", account);
-
-//         // ✅ Update signer and contract instance
-//         signer = provider.getSigner();
-//         contract = new ethers.Contract(contractAddress, contractABI, signer);
-
-//         await checkControllerStatus(); // Refresh controller permissions
-//     }
-// }
-
-// // ✅ Check if the current account is the controller
-// async function checkControllerStatus() {
-//     try {
-//         const controller = await contract.controller();
-//         console.log("Contract Controller Address:", controller);
-//         console.log("Connected Account:", account);
-
-//         const isController = controller.toLowerCase() === account.toLowerCase();
-//         console.log("Is Connected Account the Controller?", isController);
-
-//         addCandidateBtn.disabled = !isController;
-//         removeCandidateBtn.disabled = !isController;
-//         changeControllerBtn.disabled = !isController;
-
-//         if (!isController) {
-//             addCandidateBtn.title = "Only the controller can add candidates";
-//             removeCandidateBtn.title = "Only the controller can remove candidates";
-//             changeControllerBtn.title = "Only the controller can change the controller";
-//         }
-
-//         connectionStatus.innerHTML = `Connected ${isController ? '(Controller)' : '(Voter)'}`;
-//     } catch (error) {
-//         console.error("Error checking controller status:", error);
-//     }
-// }
 			
 // candidate list update karega jab tum add karoge
 async function updateCandidateList() {
@@ -511,13 +408,24 @@ async function updateCandidateList() {
 
 // candidate add karega
 async function addCandidate() {
+  if(!contract){
+    alert("Please connect your wallet first!");
+    return;
+  }
 	const name = document.getElementById("candidateName").value;
+  if(!name){
+    alert("Please enter a candidate name!");
+    return;
+  }
 	try {
 		const tx = await contract.addcandidate(name);
 		await tx.wait();
-		updateCandidateList();
+    document.getElementById("candidateName").value = ""; 
+		await updateCandidateList();
+    alert("Candidate added succesfully!");
 	} catch (error) {
 		console.error("Error adding candidate:", error);
+    alert("Failed to load the candidate!");
 	}
 }
 
@@ -535,7 +443,7 @@ async function vote() {
 
 //candidate remove kardega
 async function removeCandidate() {
-	const candidateId = document.getElementById('removeCandidateId').value;
+  const candidateId = document.getElementById('removeCandidateId').value;
 	try {
 		const tx = await contract.removecandidate(candidateId);
 		await tx.wait();
