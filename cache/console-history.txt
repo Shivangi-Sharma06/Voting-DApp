@@ -1,0 +1,10 @@
+console.log("Admin in Contract:", adminFromContract);
+const adminFromContract = await Contract.admin(); // If you have an admin function
+const Contract = await ethers.getContractAt("VotingDApp", "0xYourDeployedContractAddress");
+coconsole.log("Admin in Contract:", adminFromContract);
+const Contract = await ethers.getContractAt("YourContractName", "0xYourDeployedContractAddress");
+console.log("Admin Address:", admin.address);
+const [admin] = await ethers.getSigners();
+npx hardhat node
+console.log("New Controller:", await contract.controller());
+await contract.connect(admin).changeo
