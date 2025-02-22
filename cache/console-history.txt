@@ -7,4 +7,7 @@ console.log("Admin Address:", admin.address);
 const [admin] = await ethers.getSigners();
 npx hardhat node
 console.log("New Controller:", await contract.controller());
-await contract.connect(admin).changeo
+await contract.connect(admin).changeowner("0xNewControllerAddress");
+console.log("Current Controller:", await contract.controller());
+const [admin] = await ethers.getSigners();
+const contract = await ethers.getContractAt("YourContractName", "0xYourContractAddress");
