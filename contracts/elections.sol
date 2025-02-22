@@ -78,6 +78,11 @@ contract elections{
         return (_candidateID,c.name,c.votecount);
     }
 
+    function getController() public view returns (address) {
+    return controller;
+    }
+
+
     function countvotes(uint _candidateID) public view candidatexists(_candidateID) returns(uint){
         return candidates[_candidateID].votecount;
     }
@@ -88,4 +93,4 @@ contract elections{
 
 }
 
-//contract address deployed at 0x9393C3AF51f4Ec789830226E75CDcBC6c4bf7Df6
+

@@ -11,11 +11,16 @@
 
 <body>
 
-    <button onclick="connectWallet()">Connect Wallet</button>
+    <button onclick="connectWallet()" id="connectWallet">Connect Wallet</button>
     <select id="accountSelect" style="display:none;" onchange="selectAccount(event)">
         <!-- Accounts will be added dynamically -->
     </select>
-    <p id="walletAddress">Not Connected</p>
+    <p id="walletAddress"></p> 
+    <p id="connectionStatus">Not Connected</p>
+    <p id="accountEl"></p>
+    <p id="connectionStatus"></p>
+    <p id="controllerAddress"></p>
+
 
     <script>
         let availableAccounts = [];
@@ -96,11 +101,10 @@
 
    
 
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="./app.js" defer></script> <!--this defer means js will only execute after html is properly loaded-->
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js"></script>
 
 </body>
 </body>
 
 </html>
-Voting-
