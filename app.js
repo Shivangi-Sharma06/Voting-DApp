@@ -339,6 +339,8 @@ async function connect() {
       await checkControllerStatus();
       await updateCandidateList();
 
+      document.getElementById("accountSelect").style.display = "block";
+
       // Listen for account changes
       if (window.ethereum) {
         window.ethereum.on("accountsChanged", handleAccountsChanged);
@@ -351,6 +353,7 @@ async function connect() {
   else {
     alert("Please install MetaMask first");
   }
+
 }
 
 // Ensure global availability of connect()
@@ -385,8 +388,81 @@ window.onload = function () {
   voteBtn.addEventListener("click", vote);
 };
 
+// Variables to store available accounts and selected account
+let availableAccounts = [];
+let selectedAccount = null;
+
+// Function to Connect Wallet
+async function connectWallet() {
+    if (window.ethereum) {
+        try {
+            availableAccounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+
+            if (availableAccounts.length > 0) {
+                populateAccountDropdown(availableAccounts);
+                updateConnectionStatus(availableAccounts[0]); // Automatically select the first account
+            }
+        } catch (error) {
+            console.error("Error connecting to MetaMask:", error);
+        }
+    } else {
+        alert("MetaMask is not installed. Please install it to use this feature.");
+    }
+}
+
+// Function to Populate Account Dropdown
+function populateAccountDropdown(accounts) {
+    const accountSelect = document.getElementById("accountSelect");
+    accountSelect.innerHTML = ""; // Clear previous options
+
+    accounts.forEach(account => {
+        let option = document.createElement("option");
+        option.value = account;
+        option.textContent = account;
+        accountSelect.appendChild(option);
+    });
+
+     // Automatically select the first account and update UI
+     if (accounts.length > 0) {
+      selectedAccount = accounts[0];
+      accountSelect.value = selectedAccount;
+      updateConnectionStatus(selectedAccount);
+  }
+
+    accountSelect.style.display = "block"; // Show dropdown
+    // 🔥 **Pehle remove karo, fir add karo to avoid duplicate event listeners**
+    accountSelect.removeEventListener("change", selectAccount);
+    accountSelect.addEventListener("change", selectAccount); 
+}
+
+// Function to Select an Account from the Dropdown
+function selectAccount(event) {
+    selectedAccount = event.target.value;
+    updateConnectionStatus(selectedAccount);
+    console.log("Selected Account:", selectedAccount);
+    // Update signer and contract instance with selected account
+    signer = provider.getSigner(selectedAccount);
+    contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+    console.log("Signer Updated:", signer);
+    console.log("Contract Updated:", contract);
+}
+
+
+// Function to Update Connection Status
+function updateConnectionStatus(account) {
+    document.getElementById("walletAddress").innerText = `Connected: ${account}`;
+    document.getElementById("connectionStatus").innerText = "Connected";
+}
+
+
 
 async function handleAccountsChanged(accounts) {
+  console.log("Accounts received:", accounts); // Yeh check karega ki accounts aaraha hai ya nahi
+  if (!accounts || accounts.length === 0) { 
+      console.error("No accounts found!"); 
+      return;
+  }
   if (accounts.length === 0) {
     accountEl.innerHTML = "Not connected";
     connectionStatus.innerHTML = "Please connect to MetaMask";
@@ -397,11 +473,17 @@ async function handleAccountsChanged(accounts) {
     removeCandidateBtn.disabled = true;
     changeControllerBtn.disabled = true;
   } else {
-    account = accounts[0]; // Update active account
+     account = accounts[0]; // Update active account
     console.log("Switched Account:", account);
 
+    // Agar manually dropdown se select kiya hai toh usko override mat karo
+    if (!selectedAccount || !accounts.includes(selectedAccount)) {
+      selectedAccount = accounts[0]; // Default to first account only if dropdown selection is not made
+    }
+
+
     // Update signer and contract instance
-    signer = provider.getSigner();
+    signer = provider.getSigner(selectedAccount);
     contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     if (!contract) {
@@ -411,56 +493,13 @@ async function handleAccountsChanged(accounts) {
     }
 
     await updateControllerStatus(); // Refresh UI with new account info
+    updateConnectionStatus(selectedAccount);  // Yeh UI ko update karega (wallet address show karega)
+    populateAccountDropdown(accounts);        // Dropdown update karega
+    await checkControllerStatus();  
+    
+
   }
 }
-
-
-// async function checkControllerStatus() {
-//   try {
-//     // 🔹 Ensure contract is initialized
-//     if (!contract) {
-//       console.error("Contract is not initialized!");
-//       connectionStatus.innerHTML = "Contract not initialized!";
-//       return;
-//     }
-
-//     // 🔹 Ensure contract has getController function
-//     if (typeof contract.getController !== "function") {
-//       console.error("getController function does not exist on contract!");
-//       connectionStatus.innerHTML = "Contract function missing!";
-//       return;
-//     }
-
-//     // 🔹 Fetch Controller Address
-//     const controller = await contract.getController();
-//     console.log("Contract Controller Address:", controller);
-
-//     // 🔹 Ensure account is defined
-//     if (!account) {
-//       console.error("No account connected!");
-//       connectionStatus.innerHTML = "No account connected!";
-//       return;
-//     }
-
-//     console.log("Connected Account:", account);
-
-//     // 🔹 Check if the connected account is the controller
-//     const isController = controller.toLowerCase() === account.toLowerCase();
-//     console.log("Is Connected Account the Controller?", isController);
-
-//     // 🔹 Enable/Disable Buttons Based on Controller Status
-//     addCandidateBtn.disabled = !isController;
-//     removeCandidateBtn.disabled = !isController;
-//     changeControllerBtn.disabled = !isController;
-
-//     // 🔹 Update UI Text
-//     connectionStatus.innerHTML = `Connected ${isController ? '(Controller)' : '(Voter)'}`;
-
-//   } catch (error) {
-//     console.error("Error checking controller status:", error);
-//     connectionStatus.innerHTML = "Error checking controller status!";
-//   }
-// }
 
 async function checkControllerStatus() {
   try {

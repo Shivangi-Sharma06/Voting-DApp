@@ -11,87 +11,47 @@
 
 <body>
 
-    <button onclick="connectWallet()" id="connectWallet">Connect Wallet</button>
-    <select id="accountSelect" style="display:none;" onchange="selectAccount(event)">
-        <!-- Accounts will be added dynamically -->
+    <select id="accountSelect" style="display: none;" onchange="selectAccount(event)">
     </select>
-    <p id="walletAddress"></p> 
-    <p id="connectionStatus">Not Connected</p>
+    
     <p id="accountEl"></p>
-    <p id="connectionStatus"></p>
-    <p id="controllerAddress"></p>
+    <p id="controllerAddress"></p> 
 
+    <button id="connectWallet">Connect Wallet</button>
+<p id="connectionStatus">Not Connected</p>
+<p id="walletAddress">Wallet Address: -</p>
 
-    <script>
-        let availableAccounts = [];
-        let selectedAccount = null;
-
-        async function connectWallet() {
-            if (window.ethereum) {
-                try {
-                    availableAccounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-
-                    if (availableAccounts.length > 0) {
-                        populateAccountDropdown(availableAccounts);
-                    }
-                } catch (error) {
-                    console.error("Error connecting to MetaMask:", error);
-                }
-            } else {
-                alert("MetaMask is not installed. Please install it to use this feature.");
-            }
-        }
-
-        function populateAccountDropdown(accounts) {
-            const accountSelect = document.getElementById("accountSelect");
-            accountSelect.innerHTML = ""; // Clear previous options
-            accounts.forEach(account => {
-                let option = document.createElement("option");
-                option.value = account;
-                option.textContent = account;
-                accountSelect.appendChild(option);
-            });
-
-            accountSelect.style.display = "block"; // Show dropdown
-        }
-
-        function selectAccount(event) {
-            selectedAccount = event.target.value;
-            document.getElementById("walletAddress").innerText = `Connected: ${selectedAccount}`;
-            console.log("Selected Account:", selectedAccount);
-        }
-    </script>
 
     <div class="container">
         <h1>Voting DApp</h1>
-            
-        <div id = "controllerActions">
+
+        <div id="controllerActions">
             <h2>Controller Actions</h2>
-                <h4>Add Candidate</h4>
-                <input type="text" id="candidateName" placeholder="Candidate Name">
-                <button id="addCandidateBtn" >Add Candidate</button>
-                <span class="controller-only"></span>
+            <h4>Add Candidate</h4>
+            <input type="text" id="candidateName" placeholder="Candidate Name">
+            <button id="addCandidateBtn">Add Candidate</button>
+            <span class="controller-only"></span>
         </div>
 
         <div class="action-group">
-                <h4>Remove Candidate</h4>
-                <input type="number" id="removeCandidateId" placeholder="Candidate ID">
-                <button id="removeCandidateBtn" >Remove Candidate</button>
-                <span class="controller-only"></span>
+            <h4>Remove Candidate</h4>
+            <input type="number" id="removeCandidateId" placeholder="Candidate ID">
+            <button id="removeCandidateBtn">Remove Candidate</button>
+            <span class="controller-only"></span>
         </div>
-                
+
         <div class="action-group">
-                <h4>Change Controller</h4>
-                <input type="text" id="newControllerAddress" placeholder="New Controller Address">
-                <button id="changeControllerBtn" >Change Controller</button>
-                <span class="controller-only"></span>
+            <h4>Change Controller</h4>
+            <input type="text" id="newControllerAddress" placeholder="New Controller Address">
+            <button id="changeControllerBtn">Change Controller</button>
+            <span class="controller-only"></span>
         </div>
 
         <div>
             <h3>Vote for a Candidate</h3>
             <input type="number" id="candidateIdToVote" placeholder="Candidate ID">
             <button id="voteBtn">Vote</button>
-        </div> 
+        </div>
 
         <div id="candidateList">
             <h2>Candidates</h2>
@@ -99,9 +59,10 @@
         </div>
     </div>
 
-   
 
-    <script type="module" src="./app.js" defer></script> <!--this defer means js will only execute after html is properly loaded-->
+
+    <script type="module" src="./app.js" defer></script>
+    <!--this defer means js will only execute after html is properly loaded-->
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js"></script>
 
 </body>
