@@ -1,5 +1,5 @@
 
-const contractAddress = "0x1d5372d0A5428E57f7E686Ed792770d01af241AB";
+const contractAddress = "0xB4938B188B488f6f8B75e27e921aCFf00Fa3b624";
 const contractABI = [
   {
     "inputs": [],
@@ -290,6 +290,10 @@ const contractABI = [
   }
 ];
 
+console.log("Contract Address:", contractAddress);
+console.log("Contract ABI:", contractABI);
+
+
 let provider;
 let signer;
 let contract;
@@ -309,11 +313,24 @@ async function connect() {
       account = accounts[0]; // Set the account variable
       console.log("Connected account:", account);
       userAddress = account;
-      //accountEl.innerHTML = account;
       connectionStatus.innerHTML = "Connected";
+      console.log("🔗 Connected Account:", account);
+
+       // Ensure contractAddress and contractABI are correctly defined
+       if (!contractAddress || !contractABI) {
+        console.error("Contract address or ABI is missing!");
+        return;
+      }
 
       contract = new ethers.Contract(contractAddress, contractABI, signer);
       console.log("Contract Initialized:", contract);
+
+      if (!contract) {
+        console.error("Contract failed to initialize!");
+      } else {
+        console.log("Contract is successfully initialized!", contract);
+      }
+
 
       document.getElementById("connectionStatus").innerHTML = "Connected";
       document.getElementById("connectWallet").innerHTML = "Connected";
@@ -398,49 +415,96 @@ async function handleAccountsChanged(accounts) {
 }
 
 
+// async function checkControllerStatus() {
+//   try {
+//     // 🔹 Ensure contract is initialized
+//     if (!contract) {
+//       console.error("Contract is not initialized!");
+//       connectionStatus.innerHTML = "Contract not initialized!";
+//       return;
+//     }
+
+//     // 🔹 Ensure contract has getController function
+//     if (typeof contract.getController !== "function") {
+//       console.error("getController function does not exist on contract!");
+//       connectionStatus.innerHTML = "Contract function missing!";
+//       return;
+//     }
+
+//     // 🔹 Fetch Controller Address
+//     const controller = await contract.getController();
+//     console.log("Contract Controller Address:", controller);
+
+//     // 🔹 Ensure account is defined
+//     if (!account) {
+//       console.error("No account connected!");
+//       connectionStatus.innerHTML = "No account connected!";
+//       return;
+//     }
+
+//     console.log("Connected Account:", account);
+
+//     // 🔹 Check if the connected account is the controller
+//     const isController = controller.toLowerCase() === account.toLowerCase();
+//     console.log("Is Connected Account the Controller?", isController);
+
+//     // 🔹 Enable/Disable Buttons Based on Controller Status
+//     addCandidateBtn.disabled = !isController;
+//     removeCandidateBtn.disabled = !isController;
+//     changeControllerBtn.disabled = !isController;
+
+//     // 🔹 Update UI Text
+//     connectionStatus.innerHTML = `Connected ${isController ? '(Controller)' : '(Voter)'}`;
+
+//   } catch (error) {
+//     console.error("Error checking controller status:", error);
+//     connectionStatus.innerHTML = "Error checking controller status!";
+//   }
+// }
+
 async function checkControllerStatus() {
   try {
-    // 🔹 Ensure contract is initialized
+    // Ensure contract is initialized
     if (!contract) {
-      console.error("Contract is not initialized!");
+      console.error("❌ Contract is not initialized!");
       connectionStatus.innerHTML = "Contract not initialized!";
       return;
     }
 
-    // 🔹 Ensure contract has getController function
+    // Ensure contract has getController function
     if (typeof contract.getController !== "function") {
-      console.error("getController function does not exist on contract!");
+      console.error("❌ getController function does not exist on contract!");
       connectionStatus.innerHTML = "Contract function missing!";
       return;
     }
 
-    // 🔹 Fetch Controller Address
+    // Fetch Controller Address
     const controller = await contract.getController();
-    console.log("Contract Controller Address:", controller);
+    console.log("✅ Contract Controller Address:", controller);
 
-    // 🔹 Ensure account is defined
+    // Ensure account is defined
     if (!account) {
-      console.error("No account connected!");
+      console.error("❌ No account connected!");
       connectionStatus.innerHTML = "No account connected!";
       return;
     }
 
-    console.log("Connected Account:", account);
+    console.log("✅ Connected Account:", account);
 
-    // 🔹 Check if the connected account is the controller
+    // Check if the connected account is the controller
     const isController = controller.toLowerCase() === account.toLowerCase();
-    console.log("Is Connected Account the Controller?", isController);
+    console.log("✅ Is Connected Account the Controller?", isController);
 
-    // 🔹 Enable/Disable Buttons Based on Controller Status
+    // Enable/Disable Buttons Based on Controller Status
     addCandidateBtn.disabled = !isController;
     removeCandidateBtn.disabled = !isController;
     changeControllerBtn.disabled = !isController;
 
-    // 🔹 Update UI Text
+    // Update UI Text
     connectionStatus.innerHTML = `Connected ${isController ? '(Controller)' : '(Voter)'}`;
 
   } catch (error) {
-    console.error("Error checking controller status:", error);
+    console.error("❌ Error checking controller status:", error);
     connectionStatus.innerHTML = "Error checking controller status!";
   }
 }
