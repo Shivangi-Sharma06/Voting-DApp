@@ -410,30 +410,79 @@ async function connectWallet() {
     }
 }
 
-// Function to Populate Account Dropdown
-function populateAccountDropdown(accounts) {
-    const accountSelect = document.getElementById("accountSelect");
-    accountSelect.innerHTML = ""; // Clear previous options
+// // Function to Populate Account Dropdown
+// window. populateAccountDropdown=function(accounts) {
+//     let accountSelect = document.getElementById("accountSelect");
+//     if (!accountSelect) {
+//       console.error("Dropdown element not found!");
+//       return;
+//     }
+    
+//     accountSelect.innerHTML = ""; // Clear previous options
 
-    accounts.forEach(account => {
-        let option = document.createElement("option");
-        option.value = account;
-        option.textContent = account;
-        accountSelect.appendChild(option);
-    });
+//     accounts.forEach(account => {
+//         let option = document.createElement("option");
+//         option.value = account;
+//         option.textContent = account;
+//         accountSelect.appendChild(option);
+//     });
 
-     // Automatically select the first account and update UI
-     if (accounts.length > 0) {
+//      // Automatically select the first account and update UI
+//      if (accounts.length > 0) {
+//       selectedAccount = accounts[0];
+//       accountSelect.value = selectedAccount;
+//       updateConnectionStatus(selectedAccount);
+//   }
+
+//     accountSelect.style.display = "block"; // Show dropdown
+//     // 🔥 **Pehle remove karo, fir add karo to avoid duplicate event listeners**
+//     accountSelect.removeEventListener("change", selectAccount);
+//     accountSelect.addEventListener("change", selectAccount); 
+// }
+
+window.populateAccountDropdown = function (accounts) {
+  let accountSelect = document.getElementById("accountSelect");
+
+  // 🔥 Yeh fix kiya! Galti se 'dropdown' check kar rahe the instead of 'accountSelect'
+  if (!accountSelect) {
+      console.error("Dropdown element not found!");
+      return;
+  }
+
+  accountSelect.innerHTML = ""; // Purana data clear karo
+
+  accounts.forEach(account => {
+      let option = document.createElement("option");
+      option.value = account;
+      option.textContent = account;
+      accountSelect.appendChild(option);
+  });
+
+  // 🔥 Ensure it's visible
+  accountSelect.style.display = "block"; 
+
+  // ✅ Pehle remove event listener, fir add karo (duplicate avoid karne ke liye)
+  accountSelect.removeEventListener("change", selectAccount);
+  accountSelect.addEventListener("change", selectAccount); 
+
+  // ✅ Auto-select first account if available
+  if (accounts.length > 0) {
       selectedAccount = accounts[0];
       accountSelect.value = selectedAccount;
       updateConnectionStatus(selectedAccount);
   }
 
-    accountSelect.style.display = "block"; // Show dropdown
-    // 🔥 **Pehle remove karo, fir add karo to avoid duplicate event listeners**
-    accountSelect.removeEventListener("change", selectAccount);
-    accountSelect.addEventListener("change", selectAccount); 
+  console.log("Dropdown populated successfully!", accountSelect);
 }
+
+// 🔥 Ensure DOM is loaded before calling the function
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("DOM fully loaded");
+
+  let testAccounts = ["0x123...", "0x456...", "0x789..."];
+  populateAccountDropdown(testAccounts); // ✅ Call function when DOM is ready
+});
+
 
 // Function to Select an Account from the Dropdown
 function selectAccount(event) {
@@ -483,7 +532,7 @@ async function handleAccountsChanged(accounts) {
 
 
     // Update signer and contract instance
-    signer = provider.getSigner(selectedAccount);
+    signer = provider.getSigner();
     contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     if (!contract) {
