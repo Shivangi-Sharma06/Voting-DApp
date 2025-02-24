@@ -410,92 +410,84 @@ async function connectWallet() {
     }
 }
 
-// // Function to Populate Account Dropdown
-// window. populateAccountDropdown=function(accounts) {
-//     let accountSelect = document.getElementById("accountSelect");
-//     if (!accountSelect) {
-//       console.error("Dropdown element not found!");
-//       return;
-//     }
-    
-//     accountSelect.innerHTML = ""; // Clear previous options
-
-//     accounts.forEach(account => {
-//         let option = document.createElement("option");
-//         option.value = account;
-//         option.textContent = account;
-//         accountSelect.appendChild(option);
-//     });
-
-//      // Automatically select the first account and update UI
-//      if (accounts.length > 0) {
-//       selectedAccount = accounts[0];
-//       accountSelect.value = selectedAccount;
-//       updateConnectionStatus(selectedAccount);
-//   }
-
-//     accountSelect.style.display = "block"; // Show dropdown
-//     // 🔥 **Pehle remove karo, fir add karo to avoid duplicate event listeners**
-//     accountSelect.removeEventListener("change", selectAccount);
-//     accountSelect.addEventListener("change", selectAccount); 
-// }
-
-window.populateAccountDropdown = function (accounts) {
-  let accountSelect = document.getElementById("accountSelect");
-
-  // 🔥 Yeh fix kiya! Galti se 'dropdown' check kar rahe the instead of 'accountSelect'
-  if (!accountSelect) {
-      console.error("Dropdown element not found!");
+// Function to Populate Dropdown with MetaMask Accounts
+window.populateAccountDropdown = async function () {
+  if (!window.ethereum) {
+      console.error("MetaMask is not installed!");
       return;
   }
 
-  accountSelect.innerHTML = ""; // Purana data clear karo
+  try {
+      // 🔥 Request accounts from MetaMask
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
 
-  accounts.forEach(account => {
-      let option = document.createElement("option");
-      option.value = account;
-      option.textContent = account;
-      accountSelect.appendChild(option);
-  });
+      if (!accounts || accounts.length === 0) {
+          console.warn("No accounts found in MetaMask.");
+          return;
+      }
 
-  // 🔥 Ensure it's visible
-  accountSelect.style.display = "block"; 
+      let accountSelect = document.getElementById("accountSelect");
+      if (!accountSelect) {
+          console.error("Dropdown element not found!");
+          return;
+      }
 
-  // ✅ Pehle remove event listener, fir add karo (duplicate avoid karne ke liye)
-  accountSelect.removeEventListener("change", selectAccount);
-  accountSelect.addEventListener("change", selectAccount); 
+      accountSelect.innerHTML = ""; // Clear previous options
 
-  // ✅ Auto-select first account if available
-  if (accounts.length > 0) {
+      accounts.forEach(account => {
+          let option = document.createElement("option");
+          option.value = account;
+          option.textContent = account;
+          accountSelect.appendChild(option);
+      });
+
+      // 🔥 Ensure dropdown is visible
+      accountSelect.style.display = "block";
+
+      // ✅ Remove existing event listener (to prevent duplicates)
+      accountSelect.removeEventListener("change", selectAccount);
+      accountSelect.addEventListener("change", selectAccount);
+
+      // ✅ Auto-select first account
       selectedAccount = accounts[0];
       accountSelect.value = selectedAccount;
       updateConnectionStatus(selectedAccount);
+
+      console.log("Dropdown populated with MetaMask accounts:", accounts);
+  } catch (error) {
+      console.error("Error fetching accounts from MetaMask:", error);
   }
-
-  console.log("Dropdown populated successfully!", accountSelect);
-}
-
-// 🔥 Ensure DOM is loaded before calling the function
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOM fully loaded");
-
-  let testAccounts = ["0x123...", "0x456...", "0x789..."];
-  populateAccountDropdown(testAccounts); // ✅ Call function when DOM is ready
-});
-
+};
 
 // Function to Select an Account from the Dropdown
 function selectAccount(event) {
-    selectedAccount = event.target.value;
-    updateConnectionStatus(selectedAccount);
-    console.log("Selected Account:", selectedAccount);
-    // Update signer and contract instance with selected account
-    signer = provider.getSigner(selectedAccount);
-    contract = new ethers.Contract(contractAddress, contractABI, signer);
+  selectedAccount = event.target.value;
+  updateConnectionStatus(selectedAccount);
+  console.log("Selected Account:", selectedAccount);
 
-    console.log("Signer Updated:", signer);
-    console.log("Contract Updated:", contract);
+  // Check if the selected address is valid
+  if (!ethers.utils.isAddress(selectedAccount)) {
+      console.error("Invalid address selected:", selectedAccount);
+      return;
+  }
+
+  // 🔥 Get signer from provider (MetaMask)
+  signer = provider.getSigner(selectedAccount);
+  contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+  console.log("Signer Updated:", signer);
+  console.log("Contract Updated:", contract);
 }
+
+// Ensure function is globally accessible
+window.selectAccount = selectAccount;
+
+// 🔥 Fetch MetaMask Accounts When Page Loads
+document.addEventListener("DOMContentLoaded", async function () {
+  console.log("DOM fully loaded");
+  await populateAccountDropdown(); // ✅ Call function to get accounts from MetaMask
+});
+
 
 
 // Function to Update Connection Status
