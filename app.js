@@ -419,7 +419,7 @@ window.populateAccountDropdown = async function () {
 
   try {
       // 🔥 Request accounts from MetaMask
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
 
       if (!accounts || accounts.length === 0) {
           console.warn("No accounts found in MetaMask.");
@@ -452,6 +452,8 @@ window.populateAccountDropdown = async function () {
       selectedAccount = accounts[0];
       accountSelect.value = selectedAccount;
       updateConnectionStatus(selectedAccount);
+      updateSignerAndContract(selectedAccount);
+
 
       console.log("Dropdown populated with MetaMask accounts:", accounts);
   } catch (error) {
@@ -462,32 +464,54 @@ window.populateAccountDropdown = async function () {
 // Function to Select an Account from the Dropdown
 function selectAccount(event) {
   selectedAccount = event.target.value;
-  updateConnectionStatus(selectedAccount);
-  console.log("Selected Account:", selectedAccount);
-
-  // Check if the selected address is valid
-  if (!ethers.utils.isAddress(selectedAccount)) {
-      console.error("Invalid address selected:", selectedAccount);
-      return;
-  }
-
-  // 🔥 Get signer from provider (MetaMask)
-  signer = provider.getSigner(selectedAccount);
-  contract = new ethers.Contract(contractAddress, contractABI, signer);
-
-  console.log("Signer Updated:", signer);
-  console.log("Contract Updated:", contract);
+  selectAccountFromDropdown(selected);
 }
 
-// Ensure function is globally accessible
-window.selectAccount = selectAccount;
+// Function to update signer, contract & sync accounts
+async function selectAccountFromDropdown(account) {
+    console.log("🔄 Selected Account:", account);
 
-// 🔥 Fetch MetaMask Accounts When Page Loads
-document.addEventListener("DOMContentLoaded", async function () {
-  console.log("DOM fully loaded");
-  await populateAccountDropdown(); // ✅ Call function to get accounts from MetaMask
+    if (!ethers.utils.isAddress(account)) {
+        console.error("❌ Invalid address selected:", account);
+        return;
+    }
+
+    try {
+        // 🔥 Get signer from provider
+        selectedAccount = account;
+        const signer = provider.getSigner(selectedAccount);
+        contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        // ✅ Update UI
+        updateConnectionStatus(selectedAccount);
+
+        console.log("✅ Signer Updated:", signer);
+        console.log("✅ Contract Updated:", contract);
+    } catch (error) {
+        console.error("❌ Error updating signer & contract:", error);
+    }
+}
+
+// ✅ Sync MetaMask's connected account with the dropdown
+window.ethereum.on("accountsChanged", (accounts) => {
+    if (accounts.length > 0) {
+        console.log("🔄 MetaMask Account Changed:", accounts[0]);
+
+        // ✅ Auto-update dropdown selection to match MetaMask
+        document.getElementById("accountSelect").value = accounts[0];
+
+        // ✅ Update selected account
+        selectAccountFromDropdown(accounts[0]);
+    } else {
+        console.warn("⚠️ No accounts available.");
+    }
 });
 
+// Ensure provider is initialized on page load
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ DOM fully loaded");
+    populateAccountDropdown();
+});
 
 
 // Function to Update Connection Status
