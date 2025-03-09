@@ -452,7 +452,7 @@ window.populateAccountDropdown = async function () {
       selectedAccount = accounts[0];
       accountSelect.value = selectedAccount;
       updateConnectionStatus(selectedAccount);
-      updateSignerAndContract(selectedAccount);
+      selectAccountFromDropdown(selectedAccount);
 
 
       console.log("Dropdown populated with MetaMask accounts:", accounts);
@@ -462,10 +462,14 @@ window.populateAccountDropdown = async function () {
 };
 
 // Function to Select an Account from the Dropdown
-function selectAccount(event) {
-  selectedAccount = event.target.value;
-  selectAccountFromDropdown(selected);
-}
+window.selectAccount = function(event) {
+  let selectedAccount = event.target.value;  // Getting the selected value
+  console.log("Selected account:", selectedAccount);
+  selectAccountFromDropdown(selectedAccount);
+  // Add logic to update account selection here
+};
+
+
 
 // Function to update signer, contract & sync accounts
 async function selectAccountFromDropdown(account) {
@@ -478,6 +482,7 @@ async function selectAccountFromDropdown(account) {
 
     try {
         // 🔥 Get signer from provider
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         selectedAccount = account;
         const signer = provider.getSigner(selectedAccount);
         contract = new ethers.Contract(contractAddress, contractABI, signer);
@@ -497,11 +502,19 @@ window.ethereum.on("accountsChanged", (accounts) => {
     if (accounts.length > 0) {
         console.log("🔄 MetaMask Account Changed:", accounts[0]);
 
-        // ✅ Auto-update dropdown selection to match MetaMask
-        document.getElementById("accountSelect").value = accounts[0];
+
+        // ✅ Update dropdown value
+        let accountSelect = document.getElementById("accountSelect");
+        if (accountSelect) {
+            accountSelect.value = accounts[0];
+        }
+
+        // // ✅ Auto-update dropdown selection to match MetaMask
+        // selectedAccount = accounts[0];
+        // document.getElementById("accountSelect").value = selectedAccount;
 
         // ✅ Update selected account
-        selectAccountFromDropdown(accounts[0]);
+        selectAccountFromDropdown(selectedAccount);
     } else {
         console.warn("⚠️ No accounts available.");
     }
@@ -650,7 +663,7 @@ async function addCandidate() {
     alert("Candidate added succesfully!");
   } catch (error) {
     console.error("Error adding candidate:", error);
-    alert("Failed to load the candidate!");
+    alert("Failed to load the candidate! Only the Controller can add the candidate.");
   }
 }
 
@@ -676,7 +689,7 @@ async function removeCandidate() {
     await updateCandidateList();
   } catch (error) {
     console.error("Error removing candidate:", error);
-    alert('Error removing candidate. Check console for details.');
+    alert('Error removing candidate. Only the controller can remove the candidate.');
   }
 }
 
@@ -700,7 +713,7 @@ async function changeController() {
     await updateControllerStatus();
   } catch (error) {
     console.error("Error changing controller:", error);
-    alert("Error changing controller. Check console for details.");
+    alert("Error changing controller. Only the controller can assign the new controller.");
   }
 }
 
