@@ -302,7 +302,7 @@ let account;
 
 async function connect() {
   if (typeof window.ethereum !== 'undefined') {
-    try {
+    try { //tries to access the accounts from metamask
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       provider = new ethers.providers.Web3Provider(window.ethereum);
       console.log("Provider initialized:", provider);
@@ -310,11 +310,11 @@ async function connect() {
       signer = provider.getSigner();
       console.log("Signer set to:", signer);
 
-      account = accounts[0]; // Set the account variable
+      account = accounts[0]; // Set the account variable to the first account in the array
       console.log("Connected account:", account);
       userAddress = account;
       connectionStatus.innerHTML = "Connected";
-      console.log("🔗 Connected Account:", account);
+      console.log("Connected Account:", account);
 
        // Ensure contractAddress and contractABI are correctly defined
        if (!contractAddress || !contractABI) {
@@ -341,7 +341,7 @@ async function connect() {
 
       document.getElementById("accountSelect").style.display = "block";
 
-      // Listen for account changes
+      // Listen for account changes if done
       if (window.ethereum) {
         window.ethereum.on("accountsChanged", handleAccountsChanged);
       }
@@ -356,10 +356,11 @@ async function connect() {
 
 }
 
-// Ensure global availability of connect()
+// Ensure global availability of connect function
 window.connect = connect;
 
-// Move DOM element selections to the top
+// DOM element selections to the top helps them to load first
+
 const connectButton = document.getElementById("connectWallet");
 const accountEl = document.getElementById("account");
 const connectionStatus = document.getElementById("connectionStatus");
@@ -371,11 +372,11 @@ const voteBtn = document.getElementById("voteBtn");
 if (connectButton) {
   connectButton.addEventListener("click", connect);
 } else {
-  console.error("❌ connectWallet button not found in DOM!");
+  console.error(" connectWallet button not found in DOM!");
 }
 
 if (!connectionStatus) {
-  console.error("❌ connectionStatus element not found in DOM!");
+  console.error("connectionStatus element not found in DOM!");
 };
 
 
@@ -393,6 +394,7 @@ let availableAccounts = [];
 let selectedAccount = null;
 
 // Function to Connect Wallet
+
 async function connectWallet() {
     if (window.ethereum) {
         try {
@@ -410,7 +412,7 @@ async function connectWallet() {
     }
 }
 
-// Function to Populate Dropdown with MetaMask Accounts
+// Function to Populate Dropdown with MetaMask Accounts and show accounts
 window.populateAccountDropdown = async function () {
   if (!window.ethereum) {
       console.error("MetaMask is not installed!");
@@ -418,7 +420,7 @@ window.populateAccountDropdown = async function () {
   }
 
   try {
-      // 🔥 Request accounts from MetaMask
+      // Request accounts from MetaMask
       const accounts = await window.ethereum.request({ method: "eth_accounts" });
 
       if (!accounts || accounts.length === 0) {
@@ -434,21 +436,21 @@ window.populateAccountDropdown = async function () {
 
       accountSelect.innerHTML = ""; // Clear previous options
 
-      accounts.forEach(account => {
+      accounts.forEach(account => { //segment of code to populate the dropdown with accounts
           let option = document.createElement("option");
           option.value = account;
           option.textContent = account;
           accountSelect.appendChild(option);
       });
 
-      // 🔥 Ensure dropdown is visible
+      // Ensure dropdown is visible to everyone
       accountSelect.style.display = "block";
 
-      // ✅ Remove existing event listener (to prevent duplicates)
+      //Remove existing event listener (to prevent duplicates)
       accountSelect.removeEventListener("change", selectAccount);
       accountSelect.addEventListener("change", selectAccount);
 
-      // ✅ Auto-select first account
+      //  Auto-select first account
       selectedAccount = accounts[0];
       accountSelect.value = selectedAccount;
       updateConnectionStatus(selectedAccount);
@@ -466,63 +468,55 @@ window.selectAccount = function(event) {
   let selectedAccount = event.target.value;  // Getting the selected value
   console.log("Selected account:", selectedAccount);
   selectAccountFromDropdown(selectedAccount);
-  // Add logic to update account selection here
 };
 
 
 
 // Function to update signer, contract & sync accounts
 async function selectAccountFromDropdown(account) {
-    console.log("🔄 Selected Account:", account);
+    console.log(" Selected Account:", account);
 
     if (!ethers.utils.isAddress(account)) {
-        console.error("❌ Invalid address selected:", account);
+        console.error("Invalid address selected:", account);
         return;
     }
-
     try {
-        // 🔥 Get signer from provider
+        //  Get signer from provider
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         selectedAccount = account;
         const signer = provider.getSigner(selectedAccount);
         contract = new ethers.Contract(contractAddress, contractABI, signer);
 
-        // ✅ Update UI
+        //  Update UI
         updateConnectionStatus(selectedAccount);
 
-        console.log("✅ Signer Updated:", signer);
-        console.log("✅ Contract Updated:", contract);
+        console.log("Signer Updated:", signer);
+        console.log("Contract Updated:", contract);
     } catch (error) {
-        console.error("❌ Error updating signer & contract:", error);
+        console.error("Error updating signer & contract:", error);
     }
 }
 
-// ✅ Sync MetaMask's connected account with the dropdown
+//  Sync MetaMask's connected account with the dropdown
 window.ethereum.on("accountsChanged", (accounts) => {
     if (accounts.length > 0) {
         console.log("🔄 MetaMask Account Changed:", accounts[0]);
 
 
-        // ✅ Update dropdown value
+        //  Update dropdown value
         let accountSelect = document.getElementById("accountSelect");
         if (accountSelect) {
             accountSelect.value = accounts[0];
         }
-
-        // // ✅ Auto-update dropdown selection to match MetaMask
-        // selectedAccount = accounts[0];
-        // document.getElementById("accountSelect").value = selectedAccount;
-
-        // ✅ Update selected account
         selectAccountFromDropdown(selectedAccount);
     } else {
-        console.warn("⚠️ No accounts available.");
+        console.warn(" No accounts available.");
     }
 });
 
 // Ensure provider is initialized on page load
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ DOM fully loaded");
+    console.log(" DOM fully loaded");
     populateAccountDropdown();
 });
 
@@ -583,34 +577,34 @@ async function checkControllerStatus() {
   try {
     // Ensure contract is initialized
     if (!contract) {
-      console.error("❌ Contract is not initialized!");
+      console.error("Contract is not initialized!");
       connectionStatus.innerHTML = "Contract not initialized!";
       return;
     }
 
-    // Ensure contract has getController function
+    // Ensure contract has getController function and fetches info from that
     if (typeof contract.getController !== "function") {
-      console.error("❌ getController function does not exist on contract!");
+      console.error("getController function does not exist on contract!");
       connectionStatus.innerHTML = "Contract function missing!";
       return;
     }
 
     // Fetch Controller Address
     const controller = await contract.getController();
-    console.log("✅ Contract Controller Address:", controller);
+    console.log("Contract Controller Address:", controller);
 
     // Ensure account is defined
     if (!account) {
-      console.error("❌ No account connected!");
+      console.error("No account connected!");
       connectionStatus.innerHTML = "No account connected!";
       return;
     }
 
-    console.log("✅ Connected Account:", account);
+    console.log("Connected Account:", account);
 
     // Check if the connected account is the controller
     const isController = controller.toLowerCase() === account.toLowerCase();
-    console.log("✅ Is Connected Account the Controller?", isController);
+    console.log(" Is Connected Account the Controller?", isController);
 
     // Enable/Disable Buttons Based on Controller Status
     addCandidateBtn.disabled = !isController;
@@ -621,7 +615,7 @@ async function checkControllerStatus() {
     connectionStatus.innerHTML = `Connected ${isController ? '(Controller)' : '(Voter)'}`;
 
   } catch (error) {
-    console.error("❌ Error checking controller status:", error);
+    console.error("Error checking controller status:", error);
     connectionStatus.innerHTML = "Error checking controller status!";
   }
 }
