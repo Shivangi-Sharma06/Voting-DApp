@@ -1,0 +1,18 @@
+# Node modules
+node_modules/
+
+# Environment secrets
+.env
+
+# Hardhat cache and artifacts
+cache/
+artifacts/
+
+# Log files
+*.log
+
+# Coverage reports
+coverage/       
+
+# Build directories 
+build/
